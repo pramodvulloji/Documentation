@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; margin: 0; padding: 0; }
+        .container { width: 80%; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .section { margin-bottom: 20px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .section-header h2 { margin: 0; }
+        .section-header button { padding: 5px 10px; }
+        .items { display: none; margin-bottom: 10px; }
+        .item { display: flex; justify-content: space-between; padding: 5px 0; }
+        .item span { margin-left: 10px; cursor: pointer; }
+        .btn-container { text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section" id="projects-section">
+            <div class="section-header">
+                <h2>Projects</h2>
+                <div>
+                    <button onclick="toggleItems('projects')">+</button>
+                    <button onclick="createItem('projects')" style="display: none;">Create</button>
+                </div>
+            </div>
+            <div class="items" id="projects-items"></div>
+        </div>
+        <div class="section" id="activities-section">
+            <div class="section-header">
+                <h2>Activities</h2>
+                <div>
+                    <button onclick="toggleItems('activities')">+</button>
+                    <button onclick="createItem('activities')" style="display: none;">Create</button>
+                </div>
+            </div>
+            <div class="items" id="activities-items"></div>
+        </div>
+        <div class="section" id="tech-doc-section">
+            <div class="section-header">
+                <h2>Tech Docs</h2>
+                <div>
+                    <button onclick="toggleItems('tech-doc')">+</button>
+                    <button onclick="createItem('tech-doc')" style="display: none;">Create</button>
+                </div>
+            </div>
+            <div class="items" id="tech-doc-items"></div>
+        </div>
+        <div class="section" id="templates-section">
+            <div class="section-header">
+                <h2>Templates</h2>
+                <div>
+                    <button onclick="toggleItems('templates')">+</button>
+                    <button onclick="createItem('templates')" style="display: none;">Create</button>
+                </div>
+            </div>
+            <div class="items" id="templates-items"></div>
+        </div>
+        <div class="section" id="case-find-section">
+            <div class="section-header">
+                <h2>Case Find</h2>
+                <div>
+                    <button onclick="toggleItems('case-find')">+</button>
+                    <button onclick="createItem('case-find')" style="display: none;">Create</button>
+                </div>
+            </div>
+            <div class="items" id="case-find-items"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleItems(section) {
+            const itemsDiv = document.getElementById(`${section}-items`);
+            const createButton = document.querySelector(`#${section}-section .section-header button:nth-child(2)`);
+            const toggleButton = document.querySelector(`#${section}-section .section-header button:first-child`);
+
+            if (itemsDiv.style.display === 'none') {
+                itemsDiv.style.display = 'block';
+                createButton.style.display = 'inline-block';
+                toggleButton.innerText = '-';
+                loadItems(section);
+            } else {
+                itemsDiv.style.display = 'none';
+                createButton.style.display = 'none';
+                toggleButton.innerText = '+';
+            }
+        }
+
+        function loadItems(section) {
+            const itemsDiv = document.getElementById(`${section}-items`);
+            itemsDiv.innerHTML = '';
+            const items = JSON.parse(localStorage.getItem(section)) || [];
+            items.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                itemDiv.innerHTML = `
+                    ${item.description} 
+                    <span onclick="viewItem('${section}', ${index})">View</span>
+                    <span onclick="editItem('${section}', ${index})">Edit</span>
+                    <span onclick="deleteItem('${section}', ${index})">Delete</span>
+                `;
+                itemsDiv.appendChild(itemDiv);
+            });
+        }
+
+        function createItem(section) {
+            window.location.href = `edit-item.html?section=${section}`;
+        }
+
+        function viewItem(section, index) {
+            const items = JSON.parse(localStorage.getItem(section)) || [];
+            alert(`Viewing ${section} item: ${items[index].description}`);
+        }
+
+        function editItem(section, index) {
+            window.location.href = `edit-item.html?section=${section}&index=${index}`;
+        }
+
+        function deleteItem(section, index) {
+            let items = JSON.parse(localStorage.getItem(section)) || [];
+            items.splice(index, 1);
+            localStorage.setItem(section, JSON.stringify(items));
+            loadItems(section);
+        }
+
+        // Initialize the page with items loaded (if any)
+        ['projects', 'activities', 'tech-doc', 'templates', 'case-find'].forEach(section => {
+            loadItems(section);
+        });
+    </script>
+</body>
+</html>

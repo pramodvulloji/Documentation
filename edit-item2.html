@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Item</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; }
+        .container { width: 80%; margin: 0 auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .section { margin: 20px 0; }
+        .section label { display: block; margin-bottom: 5px; }
+        .section input { width: 100%; padding: 8px; margin-bottom: 10px; }
+        .buttons { display: flex; justify-content: flex-end; }
+        .buttons button { margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="form-title">Edit Item</h1>
+        <div class="section">
+            <label for="description">Description</label>
+            <input type="text" id="description" />
+        </div>
+        <div class="section">
+            <label for="ear-id">EAR ID</label>
+            <input type="text" id="ear-id" />
+        </div>
+        <div class="section">
+            <label for="business-id">Business ID</label>
+            <input type="text" id="business-id" />
+        </div>
+        <div class="section">
+            <label for="domain-id">Domain ID</label>
+            <input type="text" id="domain-id" />
+        </div>
+        <div class="section">
+            <label for="build-support">Build Support</label>
+            <input type="text" id="build-support" />
+        </div>
+        <div class="section">
+            <label for="app-support">App Support</label>
+            <input type="text" id="app-support" />
+        </div>
+        <div class="buttons">
+            <button onclick="saveItem()">Save</button>
+            <button onclick="goBack()">Back</button>
+        </div>
+    </div>
+
+    <script>
+        function saveItem() {
+            const itemData = {
+                description: document.getElementById('description').value,
+                earId: document.getElementById('ear-id').value,
+                businessId: document.getElementById('business-id').value,
+                domainId: document.getElementById('domain-id').value,
+                buildSupport: document.getElementById('build-support').value,
+                appSupport: document.getElementById('app-support').value
+            };
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section');
+            const index = urlParams.get('index');
+
+            let items = JSON.parse(localStorage.getItem(section)) || [];
+
+            if (index !== null) {
+                // Edit existing item
+                items[index] = itemData;
+            } else {
+                // Create new item
+                items.push(itemData);
+            }
+
+            localStorage.setItem(section, JSON.stringify(items));
+            alert('Item saved');
+            goBack();
+        }
+
+        function goBack() {
+            window.location.href = `index.html`;
+        }
+
+        // Load existing item data if editing
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section');
+            const index = urlParams.get('index');
+            if (index !== null) {
+                const items = JSON.parse(localStorage.getItem(section)) || [];
+                const item = items[index];
+                if (item) {
+                    document.getElementById('description').value = item.description;
+                    document.getElementById('ear-id').value = item.earId;
+                    document.getElementById('business-id').value = item.businessId;
+                    document.getElementById('domain-id').value = item.domainId;
+                    document.getElementById('build-support').value = item.buildSupport;
+                    document.getElementById('app-support').value = item.appSupport;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

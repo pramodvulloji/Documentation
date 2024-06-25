@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; }
+        .container { width: 80%; margin: 0 auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .section { margin: 20px 0; }
+        .section h2 { margin-bottom: 10px; }
+        .section .item { margin: 10px 0; }
+        .section .item span { cursor: pointer; color: blue; text-decoration: underline; }
+        .dropdown-content { display: none; margin-top: 10px; }
+        .dropdown-content.visible { display: block; }
+        .environment-dropdown, .upload-section { margin: 10px 0; }
+        .upload-section label { display: block; margin-bottom: 5px; }
+        .upload-section input { width: 100%; padding: 5px; }
+        .btn-container { display: flex; justify-content: flex-end; }
+        .btn-container button { margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="project-title">Project Details</h1>
+        <div class="section">
+            <h2>H/L</h2>
+            <div class="item">
+                <span onclick="viewDocument('hl')">View</span>
+                <span onclick="uploadDocument('hl')">Update</span>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Server Inventory</h2>
+            <div class="item">
+                <span onclick="toggleDropdown('server-dropdown')">View</span>
+                <div id="server-dropdown" class="dropdown-content">
+                    <div class="server-list"></div>
+                    <input type="text" id="new-server" placeholder="Add new server" />
+                    <button onclick="addServer()">Add</button>
+                </div>
+                <span onclick="uploadDocument('server')">Update</span>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Environment</h2>
+            <div class="item">
+                <span onclick="toggleDropdown('environment-dropdown')">▼</span>
+                <span id="selected-environment">Environment</span>
+                <div id="environment-dropdown" class="dropdown-content">
+                    <div onclick="selectEnvironment('DEV')">DEV</div>
+                    <div onclick="selectEnvironment('SIT')">SIT</div>
+                    <div onclick="selectEnvironment('REPLICA')">REPLICA</div>
+                    <div onclick="selectEnvironment('PROD')">PROD</div>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Additional Information</h2>
+            <div class="upload-section">
+                <label>ARCHITECTURE</label>
+                <input type="file" id="architecture" />
+            </div>
+            <div class="upload-section">
+                <label>ISR ZONAL APPROVAL</label>
+                <input type="file" id="isr-zonal-approval" />
+            </div>
+            <div class="upload-section">
+                <label>IGF</label>
+                <input type="file" id="igf" />
+            </div>
+            <div class="upload-section">
+                <label>TECHNICAL DEPLOYMENT</label>
+                <input type="file" id="technical-deployment" />
+            </div>
+            <div class="upload-section">
+                <label>ISR ACCESS & PUBLIC IP</label>
+                <input type="file" id="isr-access-public-ip" />
+            </div>
+            <div class="upload-section">
+                <label>DOMAIN SSL</label>
+                <input type="file" id="domain-ssl" />
+            </div>
+            <div class="upload-section">
+                <label>RUN BOOK</label>
+                <input type="file" id="run-book" />
+            </div>
+            <div class="upload-section">
+                <label>TESTING</label>
+                <input type="file" id="testing" />
+            </div>
+            <div class="upload-section">
+                <label>MONITORING</label>
+                <input type="file" id="monitoring" />
+            </div>
+        </div>
+        <div class="btn-container">
+            <button onclick="saveProject()">Save</button>
+            <button onclick="goBack()">Back</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('visible');
+        }
+
+        function selectEnvironment(env) {
+            document.getElementById('selected-environment').innerText = env;
+            toggleDropdown('environment-dropdown');
+        }
+
+        function viewDocument(type) {
+            alert('Viewing document: ' + type);
+        }
+
+        function uploadDocument(type) {
+            alert('Uploading document for: ' + type);
+        }
+
+        function addServer() {
+            const newServer = document.getElementById('new-server').value;
+            if (newServer) {
+                const serverList = document.querySelector('.server-list');
+                serverList.innerHTML += `<div>${newServer} <span onclick="removeServer(this)">Remove</span></div>`;
+                document.getElementById('new-server').value = '';
+            }
+        }
+
+        function removeServer(element) {
+            element.parentElement.remove();
+        }
+
+        function saveProject() {
+            alert('Project saved');
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Load project details on page load
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section');
+            const index = urlParams.get('index');
+            const items = JSON.parse(localStorage.getItem(section)) || [];
+            const item = items[index];
+            document.getElementById('project-title').innerText = `Project Details: ${item.description}`;
+        }
+    </script>
+</body>
+</html>
